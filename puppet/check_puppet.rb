@@ -76,6 +76,7 @@ opt.parse!
 
 if warn == 0 || crit == 0
     puts "Please specify a warning and critical level"
+    puts opt
     exit 3
 end
 
