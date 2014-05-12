@@ -17,6 +17,11 @@
 require 'optparse'
 require 'yaml'
 
+EXIT_OK 0
+EXIT_WARNING 1
+EXIT_CRITICAL 2
+EXIT_ERROR 3
+
 agent_lockfile = "/var/lib/puppet/state/agent_catalog_run.lock"
 agent_disabled_lockfile = "/var/lib/puppet/state/agent_disabled.lock"
 statefile = "/var/lib/puppet/state/state.yaml"
@@ -77,7 +82,7 @@ opt.parse!
 if warn == 0 || crit == 0
     puts "Please specify a warning and critical level"
     puts opt
-    exit 3
+    exit EXIT_ERROR
 end
 
 if File.exists?(agent_lockfile)
@@ -141,55 +146,55 @@ failed = "#{failed_resources} #{failed_events}"
 unless failures
     if enabled_only && enabled == false
         puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events#{perfdata_time}"
-        exit 0
+        exit EXIT_OK
     end
 
     if total_failure
         puts "CRITICAL: FAILED - Puppet failed to run. Missing dependencies? Catalog compilation failed? Last run #{time_since_last_run_string}#{perfdata_time}"
-        exit 2
+        exit EXIT_CRITICAL
     elsif time_since_last_run >= crit
         puts "CRITICAL: last run #{time_since_last_run_string}, expected < #{crit}s#{perfdata_time}"
-        exit 2
+        exit EXIT_CRITICAL
 
     elsif time_since_last_run >= warn
         puts "WARNING: last run #{time_since_last_run_string}, expected < #{warn}s#{perfdata_time}"
-        exit 1
+        exit EXIT_WARNING
 
     else
         if enabled
             puts "OK: last run #{time_since_last_run_string} with #{failed} and currently enabled#{perfdata_time}"
         else
             puts "WARNING: last run #{time_since_last_run_string} with #{failed} and currently disabled#{perfdata_time}"
-            exit 1
+            exit EXIT_WARNING
          end
 
-        exit 0
+        exit EXIT_OK
     end
 else
     if enabled_only && enabled == false
         puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with #{failed_resources} #{perfdata_time}"
-        exit 0
+        exit EXIT_OK
     end
 
     if total_failure
         puts "CRITICAL: FAILED - Puppet failed to run. Missing dependencies? Catalog compilation failed? Last run #{time_since_last_run_string}#{perfdata_time}"
-        exit 2
+        exit EXIT_CRITICAL
     elsif failcount_resources >= crit
         puts "CRITICAL: Puppet last ran had #{failed}, expected < #{crit}#{perfdata_time}"
-        exit 2
+        exit EXIT_CRITICAL
 
     elsif failcount_resources >= warn
         puts "WARNING: Puppet last ran had #{failed}, expected < #{warn}#{perfdata_time}"
-        exit 1
+        exit EXIT_WARNING
 
     else
         if enabled
             puts "OK: last run #{time_since_last_run_string} with #{failed} and currently enabled#{perfdata_time}"
         else
             puts "WARNING: last run #{time_since_last_run_string} with #{failed} and currently disabled#{perfdata_time}"
-            exit 1
+            exit EXIT_WARNING
         end
 
-        exit 0
+        exit EXIT_OK
     end
 end
