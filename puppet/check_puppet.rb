@@ -134,6 +134,10 @@ else
   perfdata_time = "|time_since_last_run=#{time_since_last_run}s;#{warn};#{crit};0 failed_resources=#{failcount_resources};;;0 failed_events=#{failcount_events};;;0"
 end
 
+failed_resources = "#{failcount_resources} failed resources"
+failed_events = "#{failcount_events} failed events"
+failed = "#{failed_resources} #{failed_events}"
+
 unless failures
     if enabled_only && enabled == false
         puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events#{perfdata_time}"
@@ -153,9 +157,9 @@ unless failures
 
     else
         if enabled
-            puts "OK: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently enabled#{perfdata_time}"
+            puts "OK: last run #{time_since_last_run_string} with #{failed} and currently enabled#{perfdata_time}"
         else
-            puts "WARNING: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently disabled#{perfdata_time}"
+            puts "WARNING: last run #{time_since_last_run_string} with #{failed} and currently disabled#{perfdata_time}"
             exit 1
          end
 
@@ -163,7 +167,7 @@ unless failures
     end
 else
     if enabled_only && enabled == false
-        puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events#{perfdata_time}"
+        puts "OK: Puppet is currently disabled, not alerting. Last run #{time_since_last_run_string} with #{failed_resources} #{perfdata_time}"
         exit 0
     end
 
@@ -171,18 +175,18 @@ else
         puts "CRITICAL: FAILED - Puppet failed to run. Missing dependencies? Catalog compilation failed? Last run #{time_since_last_run_string}#{perfdata_time}"
         exit 2
     elsif failcount_resources >= crit
-        puts "CRITICAL: Puppet last ran had #{failcount_resources} failed resources #{failcount_events} failed events, expected < #{crit}#{perfdata_time}"
+        puts "CRITICAL: Puppet last ran had #{failed}, expected < #{crit}#{perfdata_time}"
         exit 2
 
     elsif failcount_resources >= warn
-        puts "WARNING: Puppet last ran had #{failcount_resources} failed resources #{failcount_events} failed events, expected < #{warn}#{perfdata_time}"
+        puts "WARNING: Puppet last ran had #{failed}, expected < #{warn}#{perfdata_time}"
         exit 1
 
     else
         if enabled
-            puts "OK: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently enabled#{perfdata_time}"
+            puts "OK: last run #{time_since_last_run_string} with #{failed} and currently enabled#{perfdata_time}"
         else
-            puts "WARNING: last run #{time_since_last_run_string} with #{failcount_resources} failed resources #{failcount_events} failed events and currently disabled#{perfdata_time}"
+            puts "WARNING: last run #{time_since_last_run_string} with #{failed} and currently disabled#{perfdata_time}"
             exit 1
         end
 
