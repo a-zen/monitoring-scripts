@@ -98,8 +98,6 @@ if File.exists?(agent_disabled_lockfile)
 end
 
 
-lastrun = File.stat(statefile).mtime.to_i if File.exists?(statefile)
-
 if File.exists?(summaryfile)
     begin
         summary = YAML.load_file(summaryfile)
