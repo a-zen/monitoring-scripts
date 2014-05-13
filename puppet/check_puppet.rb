@@ -120,6 +120,9 @@ if File.exists?(summaryfile)
         failcount_events = 0
         summary = nil
     end
+else
+  puts "ERROR: summaryfile not found: #{summaryfile}"
+  exit EXIT_ERROR
 end
 
 time_since_last_run = Time.now.to_i - lastrun
