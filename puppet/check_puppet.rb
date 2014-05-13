@@ -17,10 +17,10 @@
 require 'optparse'
 require 'yaml'
 
-EXIT_OK 0
-EXIT_WARNING 1
-EXIT_CRITICAL 2
-EXIT_ERROR 3
+EXIT_OK = 0
+EXIT_WARNING = 1
+EXIT_CRITICAL = 2
+EXIT_ERROR = 3
 
 agent_lockfile = "/var/lib/puppet/state/agent_catalog_run.lock"
 agent_disabled_lockfile = "/var/lib/puppet/state/agent_disabled.lock"
