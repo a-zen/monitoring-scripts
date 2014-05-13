@@ -7,8 +7,7 @@
 # that are not enabled
 #
 # The script will use the puppet last_run_summary.yaml
-# file to determine when last Puppet ran else the age
-# of the statefile.
+# file to determine when last Puppet ran.
 #
 # 19/12/2013 --- Change to lock files and handling of a puppet agent in a disabled state (WARNING)
 #            *** These changes are made to work with puppet 3.X and MAY cause some issues with 2.x users
@@ -24,7 +23,6 @@ EXIT_ERROR = 3
 
 agent_lockfile = "/var/lib/puppet/state/agent_catalog_run.lock"
 agent_disabled_lockfile = "/var/lib/puppet/state/agent_disabled.lock"
-statefile = "/var/lib/puppet/state/state.yaml"
 summaryfile = "/var/lib/puppet/state/last_run_summary.yaml"
 enabled = true
 running = false
@@ -63,10 +61,6 @@ end
 
 opt.on("--agent-disabled-lock-file [FILE]", "-d", "Location of the agent disabled lock file, default #{agent_disabled_lockfile}") do |f|
     agent_disabled_lockfile = f
-end
-
-opt.on("--state-file [FILE]", "-t", "Location of the state file, default #{statefile}") do |f|
-    statefile = f
 end
 
 opt.on("--summary-file [FILE]", "-s", "Location of the summary file, default #{summaryfile}") do |f|
